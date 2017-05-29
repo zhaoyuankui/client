@@ -69,6 +69,17 @@ Compare `REMOVE <https://msdn.microsoft.com/en-us/library/windows/desktop/aa3711
 and `ADDDEFAULT <https://msdn.microsoft.com/en-us/library/windows/desktop/aa367518(v=vs.85).aspx>`_
 on the Windows Installer Guide.
 
+You can adjust the installation folder by specifying the `APPLICATIONFOLDER`
+property like this::
+
+  msiexec /passive /install ownCloud-x.y.z.msi APPLICATIONFOLDER="C:\Program Files (x86)\Non Standard ownCloud Client Folder"
+
+Be careful when using PowerShell instead of `cmd.exe`, it can be tricky to get
+the whitespace escaping right there. Specifying the APPLICATIONFOLDER like this
+only works on first installation, you cannot simply reinvoke the .msi with a
+different path. If you still need to change it, uninstall it first and reinstall
+it with the new path.
+
 
 Installation Wizard
 -------------------
