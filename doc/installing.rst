@@ -75,10 +75,19 @@ property like this::
   msiexec /passive /install ownCloud-x.y.z.msi APPLICATIONFOLDER="C:\Program Files (x86)\Non Standard ownCloud Client Folder"
 
 Be careful when using PowerShell instead of `cmd.exe`, it can be tricky to get
-the whitespace escaping right there. Specifying the APPLICATIONFOLDER like this
+the whitespace escaping right there. Specifying the `APPLICATIONFOLDER` like this
 only works on first installation, you cannot simply reinvoke the .msi with a
 different path. If you still need to change it, uninstall it first and reinstall
 it with the new path.
+
+Automatic updates can be disabled or explicitly enabled by passing the `NOAUTOUPDATE`
+property to `msiexec` like this::
+
+  msiexec /passive /install ownCloud-x.y.z.msi NOAUTOUPDATE="0" REINSTALL=ALL
+
+`NOTE:` Make sure to pass `REINSTALL=ALL`, when you want to change the value for an
+upgrade installation. Otherwise it won't take effect. If you are passing the
+`REINSTALLMODE` property, make sure it contains the `m` flag.
 
 
 Installation Wizard
