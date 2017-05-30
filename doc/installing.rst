@@ -32,6 +32,9 @@ If you just want to install ownCloud Desktop Synchronization Client on your loca
 system, you can simply launch the .msi file and configure it in the wizard
 that pops up.
 
+Features
+^^^^^^^^
+
 The MSI installer provides several features that can be installed or removed
 individually, which you can also control via command-line, if you are automating
 the installation::
@@ -69,6 +72,9 @@ Compare `REMOVE <https://msdn.microsoft.com/en-us/library/windows/desktop/aa3711
 and `ADDDEFAULT <https://msdn.microsoft.com/en-us/library/windows/desktop/aa367518(v=vs.85).aspx>`_
 on the Windows Installer Guide.
 
+Installation folder
+^^^^^^^^^^^^^^^^^^^
+
 You can adjust the installation folder by specifying the `APPLICATIONFOLDER`
 property like this::
 
@@ -80,14 +86,23 @@ only works on first installation, you cannot simply reinvoke the .msi with a
 different path. If you still need to change it, uninstall it first and reinstall
 it with the new path.
 
-Automatic updates can be disabled or explicitly enabled by passing the `NOAUTOUPDATE`
-property to `msiexec` like this::
+Disabling automatic updates
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+To disable automatic updates, you can pass the `SKIPAUTOUPDATE` property.::
 
-  msiexec /passive /install ownCloud-x.y.z.msi NOAUTOUPDATE="0" REINSTALL=ALL
+    msiexec /passive /install ownCloud-x.y.z.msi SKIPAUTOUPDATE="1"
 
-`NOTE:` Make sure to pass `REINSTALL=ALL`, when you want to change the value for an
-upgrade installation. Otherwise it won't take effect. If you are passing the
-`REINSTALLMODE` property, make sure it contains the `m` flag.
+
+Launch after installation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To launch the client automatically after installation, you can pass the `LAUNCH` property.::
+
+    msiexec /passive /install ownCloud-x.y.z.msi LAUNCH="1"
+
+This option also removes the checkbox to let users decide if they want to launch the client
+for non passive/quiet mode.
+`NOTE:` If the ownCloud client is running, it's restarted after upgrades anyway. 
 
 
 Installation Wizard
