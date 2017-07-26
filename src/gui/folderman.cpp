@@ -17,6 +17,7 @@
 #include "folderman.h"
 #include "configfile.h"
 #include "folder.h"
+#include "cryptofolder.h"
 #include "syncresult.h"
 #include "theme.h"
 #include "socketapi.h"
@@ -948,7 +949,13 @@ AbstractFolder *FolderMan::addFolderInternal(FolderDefinition folderDefinition,
         folderDefinition.alias = alias + QString::number(++count);
     }
 
-    auto folder = new Folder(folderDefinition, accountState, this);
+    AbstractFolder *folder = 0;
+    if( folderDefinition.cryptoContainerPath.isEmpty() ) {
+        // normal sync folder
+        folder = new Folder(folderDefinition, accountState, this);
+    } else {
+        folder = new CryptoFolder(folderDefinition, accountState, this);
+    }
 
     qCInfo(lcFolderMan) << "Adding folder to Folder Map " << folder << folder->alias();
     _folderMap[folder->alias()] = folder;

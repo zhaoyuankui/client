@@ -49,6 +49,7 @@ set(client_SRCS
     application.cpp
     folder.cpp
     abstractfolder.cpp
+    cryptofolder.cpp
     folderdefinition.cpp
     folderman.cpp
     folderstatusmodel.cpp
