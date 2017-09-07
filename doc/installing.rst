@@ -98,12 +98,12 @@ Launch after installation
 
 To launch the client automatically after installation, you can pass the `LAUNCH` property.::
 
-    msiexec /passive /install ownCloud-x.y.z.msi LAUNCH="1"
+    msiexec /install ownCloud-x.y.z.msi LAUNCH="1"
 
 This option also removes the checkbox to let users decide if they want to launch the client
 for non passive/quiet mode.
 `NOTE:` If the ownCloud client is running, it's restarted after upgrades anyway. 
-
+`ǸOTE:` This option does not work without a UI, support for that is going to be added soon.
 
 Installation Wizard
 -------------------
