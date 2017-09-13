@@ -75,13 +75,13 @@ on the Windows Installer Guide.
 Installation folder
 ^^^^^^^^^^^^^^^^^^^
 
-You can adjust the installation folder by specifying the `APPLICATIONFOLDER`
+You can adjust the installation folder by specifying the `INSTALLDIR`
 property like this::
 
-  msiexec /passive /install ownCloud-x.y.z.msi APPLICATIONFOLDER="C:\Program Files (x86)\Non Standard ownCloud Client Folder"
+  msiexec /passive /install ownCloud-x.y.z.msi INSTALLDIR="C:\Program Files (x86)\Non Standard ownCloud Client Folder"
 
 Be careful when using PowerShell instead of `cmd.exe`, it can be tricky to get
-the whitespace escaping right there. Specifying the `APPLICATIONFOLDER` like this
+the whitespace escaping right there. Specifying the `INSTALLDIR` like this
 only works on first installation, you cannot simply reinvoke the .msi with a
 different path. If you still need to change it, uninstall it first and reinstall
 it with the new path.
