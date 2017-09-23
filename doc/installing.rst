@@ -39,13 +39,13 @@ The MSI installer provides several features that can be installed or removed
 individually, which you can also control via command-line, if you are automating
 the installation::
 
-   msiexec /passive /install ownCloud-x.y.z.msi
+   msiexec /passive /i ownCloud-x.y.z.msi
 
 will install the ownCloud Desktop Synchronization Client into the default location
 with the default features enabled. If you want to disable e.g. desktop shortcut
 icons you can simply change the above command to::
 
-   msiexec /passive /install ownCloud-x.y.z.msi REMOVE=DesktopShortcut
+   msiexec /passive /i ownCloud-x.y.z.msi REMOVE=DesktopShortcut
 
 See the following table for a list of available features:
 
@@ -63,7 +63,7 @@ See the following table for a list of available features:
 
 You can also choose to only install the client itself by using the following command::
 
-  msiexec /passive /install ownCloud-x.y.z.msi ADDDEFAULT=Client
+  msiexec /passive /i ownCloud-x.y.z.msi ADDDEFAULT=Client
 
 Windows keeps track of the installed features and `REMOVE=DesktopShortcut` will take
 care of removing this feature, whereas `ADDDEFAULT=Client` won't remove unspecified
@@ -78,7 +78,7 @@ Installation folder
 You can adjust the installation folder by specifying the `INSTALLDIR`
 property like this::
 
-  msiexec /passive /install ownCloud-x.y.z.msi INSTALLDIR="C:\Program Files (x86)\Non Standard ownCloud Client Folder"
+  msiexec /passive /i ownCloud-x.y.z.msi INSTALLDIR="C:\Program Files (x86)\Non Standard ownCloud Client Folder"
 
 Be careful when using PowerShell instead of `cmd.exe`, it can be tricky to get
 the whitespace escaping right there. Specifying the `INSTALLDIR` like this
@@ -90,7 +90,7 @@ Disabling automatic updates
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 To disable automatic updates, you can pass the `SKIPAUTOUPDATE` property.::
 
-    msiexec /passive /install ownCloud-x.y.z.msi SKIPAUTOUPDATE="1"
+    msiexec /passive /i ownCloud-x.y.z.msi SKIPAUTOUPDATE="1"
 
 
 Launch after installation
