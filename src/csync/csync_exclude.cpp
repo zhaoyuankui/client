@@ -39,6 +39,8 @@
 
 #include "common/utility.h"
 
+#include <QString>
+
 #ifdef _WIN32
 #include <io.h>
 #else
@@ -415,8 +417,90 @@ static CSYNC_EXCLUDE_TYPE _csync_excluded_common(c_strlist_t *excludes, const ch
     return match;
 }
 
-CSYNC_EXCLUDE_TYPE csync_excluded_traversal(c_strlist_t *excludes, const char *path, int filetype) {
-  return _csync_excluded_common(excludes, path, filetype, false);
+/* Only for bnames (not paths) */
+static QString convertToBnameRegexpSyntax(QString exclude)
+{
+    QString s = "^" + QRegularExpression::escape(exclude).replace("\\*", ".*").replace("?", ".") + "$";
+    //qDebug() << "Converted pattern" << exclude << "to regex" << s;
+    return s;
+}
+
+void csync_exclude_traversal_prepare(CSYNC *ctx)
+{
+    if (!ctx->excludes) {
+        qDebug() << "FURUZ";
+        //ctx->parsed_traversal_excludes.list_patterns_with_slashes = c_strlist_new(0);
+        return;
+    }
+    c_strlist_destroy(ctx->parsed_traversal_excludes.list_patterns_with_slashes);
+    ctx->parsed_traversal_excludes.list_patterns_with_slashes = nullptr;
+    // Start out with regexes that would match nothing
+    QString _exclude_traversel_regexp_exclude = "a^";
+    QString _exclude_traversel_regexp_exclude_and_remove = "a^";
+    // FIXME: Where is the regexp reset?
+    for (unsigned int i = 0; i < ctx->excludes->count; i++) {
+        char *exclude = ctx->excludes->vector[i];
+        QString *builderToUse = & _exclude_traversel_regexp_exclude;
+        if (exclude[0] == '\n') continue; // empty line
+        if (exclude[0] == '\r') continue; // empty line
+        /* If an exclude entry contains a slash, we use the C-style codepath without QRegularEpression */
+        if (strchr(exclude, '/')) {
+            _csync_exclude_add(&ctx->parsed_traversal_excludes.list_patterns_with_slashes, exclude);
+            continue;
+        }
+        /* Those will attempt to use QRegularExpression */
+        if (exclude[0] == ']'){
+            exclude++;
+            builderToUse = &_exclude_traversel_regexp_exclude_and_remove;
+        }
+        if (builderToUse->size() > 0) {
+            builderToUse->append("|");
+        }
+        builderToUse->append(convertToBnameRegexpSyntax(exclude));
+    }
+    //qDebug() << _exclude_traversel_regexp_exclude;
+    //qDebug() << _exclude_traversel_regexp_exclude_and_remove;
+    ctx->parsed_traversal_excludes.regexp_exclude.setPattern(_exclude_traversel_regexp_exclude);
+    ctx->parsed_traversal_excludes.regexp_exclude_and_remove.setPattern(_exclude_traversel_regexp_exclude_and_remove);
+    ctx->parsed_traversal_excludes.regexp_exclude.setPatternOptions(QRegularExpression::OptimizeOnFirstUsageOption
+#if defined(Q_OS_WIN) || defined(Q_OS_MAC)
+     /* On windows and macOS, file names are Case Invesitive */
+                                                                  | QRegularExpression::CaseInsensitiveOption
+#endif
+                                                                    );
+    ctx->parsed_traversal_excludes.regexp_exclude_and_remove.setPatternOptions(QRegularExpression::OptimizeOnFirstUsageOption);
+    ctx->parsed_traversal_excludes.regexp_exclude.optimize();
+    ctx->parsed_traversal_excludes.regexp_exclude_and_remove.optimize();
+}
+
+CSYNC_EXCLUDE_TYPE csync_excluded_traversal(CSYNC *ctx, const char *path, int filetype) {
+    CSYNC_EXCLUDE_TYPE match = CSYNC_NOT_EXCLUDED;
+
+    /* Check only static patterns and only with the reduced list which is empty usually */
+    match = _csync_excluded_common(ctx->parsed_traversal_excludes.list_patterns_with_slashes, path, filetype, false);
+    if (match != CSYNC_NOT_EXCLUDED) {
+        return match;
+    }
+
+    /* Now check with our optimized regexps */
+    const char *bname = NULL;
+    /* split up the path */
+    bname = strrchr(path, '/');
+    if (bname) {
+        bname += 1; // don't include the /
+    } else {
+        bname = path;
+    }
+    QString p = QString::fromUtf8(bname);
+    if (ctx->excludes && ctx->parsed_traversal_excludes.regexp_exclude.match(p).hasMatch()) {
+        qDebug() << "WOULD EXCLUDE";
+        match = CSYNC_FILE_EXCLUDE_LIST;
+    }
+    if (ctx->excludes && ctx->parsed_traversal_excludes.regexp_exclude_and_remove.match(p).hasMatch()) {
+        qDebug() << "WOULD EXCLUDE AND REMOVE";
+        match = CSYNC_FILE_EXCLUDE_AND_REMOVE;
+    }
+    return match;
 }
 
 CSYNC_EXCLUDE_TYPE csync_excluded_no_ctx(c_strlist_t *excludes, const char *path, int filetype) {
