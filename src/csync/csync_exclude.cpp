@@ -427,16 +427,18 @@ static QString convertToBnameRegexpSyntax(QString exclude)
 
 void csync_exclude_traversal_prepare(CSYNC *ctx)
 {
-    if (!ctx->excludes) {
-        qDebug() << "FURUZ";
-        //ctx->parsed_traversal_excludes.list_patterns_with_slashes = c_strlist_new(0);
-        return;
-    }
+    qDebug() << "PREP PREP";
     c_strlist_destroy(ctx->parsed_traversal_excludes.list_patterns_with_slashes);
     ctx->parsed_traversal_excludes.list_patterns_with_slashes = nullptr;
     // Start out with regexes that would match nothing
     QString _exclude_traversel_regexp_exclude = "a^";
     QString _exclude_traversel_regexp_exclude_and_remove = "a^";
+
+    if (!ctx->excludes) {
+        qDebug() << "FURUZ";
+        //ctx->parsed_traversal_excludes.list_patterns_with_slashes = c_strlist_new(0);
+        return;
+    }
     // FIXME: Where is the regexp reset?
     for (unsigned int i = 0; i < ctx->excludes->count; i++) {
         char *exclude = ctx->excludes->vector[i];
@@ -458,8 +460,8 @@ void csync_exclude_traversal_prepare(CSYNC *ctx)
         }
         builderToUse->append(convertToBnameRegexpSyntax(exclude));
     }
-    //qDebug() << _exclude_traversel_regexp_exclude;
-    //qDebug() << _exclude_traversel_regexp_exclude_and_remove;
+    _exclude_traversel_regexp_exclude = "(" + _exclude_traversel_regexp_exclude + ")|(" + _exclude_traversel_regexp_exclude_and_remove + ")";
+    qDebug() << _exclude_traversel_regexp_exclude;
     ctx->parsed_traversal_excludes.regexp_exclude.setPattern(_exclude_traversel_regexp_exclude);
     ctx->parsed_traversal_excludes.regexp_exclude_and_remove.setPattern(_exclude_traversel_regexp_exclude_and_remove);
     ctx->parsed_traversal_excludes.regexp_exclude.setPatternOptions(QRegularExpression::OptimizeOnFirstUsageOption
@@ -492,13 +494,17 @@ CSYNC_EXCLUDE_TYPE csync_excluded_traversal(CSYNC *ctx, const char *path, int fi
         bname = path;
     }
     QString p = QString::fromUtf8(bname);
-    if (ctx->excludes && ctx->parsed_traversal_excludes.regexp_exclude.match(p).hasMatch()) {
-        qDebug() << "WOULD EXCLUDE";
-        match = CSYNC_FILE_EXCLUDE_LIST;
-    }
-    if (ctx->excludes && ctx->parsed_traversal_excludes.regexp_exclude_and_remove.match(p).hasMatch()) {
-        qDebug() << "WOULD EXCLUDE AND REMOVE";
-        match = CSYNC_FILE_EXCLUDE_AND_REMOVE;
+    if (ctx->excludes) {
+        auto m = ctx->parsed_traversal_excludes.regexp_exclude.match(p);
+        if (m.hasMatch()) {
+            if (!m.captured(1).isEmpty()) {
+                qDebug() << "WOULD EXCLUDE" << m.captured(1);
+                match = CSYNC_FILE_EXCLUDE_LIST;
+            } else if (!m.captured(2).isEmpty()) {
+                qDebug() << "WOULD EXCLUDE AND REMOVE" << m.captured(2);
+                match = CSYNC_FILE_EXCLUDE_AND_REMOVE;
+            }
+        }
     }
     return match;
 }
