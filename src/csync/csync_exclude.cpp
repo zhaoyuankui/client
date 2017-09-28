@@ -236,20 +236,28 @@ static CSYNC_EXCLUDE_TYPE _csync_excluded_common(c_strlist_t *excludes, const ch
     }
     blen = strlen(bname);
 
-    rc = csync_fnmatch("._sync_*.db*", bname, 0);
-    if (rc == 0) {
-        match = CSYNC_FILE_SILENTLY_EXCLUDED;
-        goto out;
-    }
-    rc = csync_fnmatch(".sync_*.db*", bname, 0);
-    if (rc == 0) {
-        match = CSYNC_FILE_SILENTLY_EXCLUDED;
-        goto out;
-    }
-    rc = csync_fnmatch(".csync_journal.db*", bname, 0);
-    if (rc == 0) {
-        match = CSYNC_FILE_SILENTLY_EXCLUDED;
-        goto out;
+    // 9 = strlen(".sync_.db")
+    if (blen >= 9 && bname[0] == '.') {
+        rc = csync_fnmatch("._sync_*.db*", bname, 0);
+        if (rc == 0) {
+            match = CSYNC_FILE_SILENTLY_EXCLUDED;
+            goto out;
+        }
+        rc = csync_fnmatch(".sync_*.db*", bname, 0);
+        if (rc == 0) {
+            match = CSYNC_FILE_SILENTLY_EXCLUDED;
+            goto out;
+        }
+        rc = csync_fnmatch(".csync_journal.db*", bname, 0);
+        if (rc == 0) {
+            match = CSYNC_FILE_SILENTLY_EXCLUDED;
+            goto out;
+        }
+        rc = csync_fnmatch(".owncloudsync.log*", bname, 0);
+        if (rc == 0) {
+            match = CSYNC_FILE_SILENTLY_EXCLUDED;
+            goto out;
+        }
     }
 
     // check the strlen and ignore the file if its name is longer than 254 chars.
@@ -300,12 +308,6 @@ static CSYNC_EXCLUDE_TYPE _csync_excluded_common(c_strlist_t *excludes, const ch
 
     /* We create a desktop.ini on Windows for the sidebar icon, make sure we don't sync them. */
     rc = csync_fnmatch("Desktop.ini", bname, 0);
-    if (rc == 0) {
-        match = CSYNC_FILE_SILENTLY_EXCLUDED;
-        goto out;
-    }
-
-    rc = csync_fnmatch(".owncloudsync.log*", bname, 0);
     if (rc == 0) {
         match = CSYNC_FILE_SILENTLY_EXCLUDED;
         goto out;
