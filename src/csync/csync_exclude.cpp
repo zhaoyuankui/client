@@ -420,7 +420,7 @@ static CSYNC_EXCLUDE_TYPE _csync_excluded_common(c_strlist_t *excludes, const ch
 /* Only for bnames (not paths) */
 static QString convertToBnameRegexpSyntax(QString exclude)
 {
-    QString s = "^" + QRegularExpression::escape(exclude).replace("\\*", ".*").replace("?", ".") + "$";
+    QString s = QRegularExpression::escape(exclude).replace("\\*", ".*").replace("?", ".");
     //qDebug() << "Converted pattern" << exclude << "to regex" << s;
     return s;
 }
@@ -460,7 +460,7 @@ void csync_exclude_traversal_prepare(CSYNC *ctx)
         }
         builderToUse->append(convertToBnameRegexpSyntax(exclude));
     }
-    _exclude_traversel_regexp_exclude = "(" + _exclude_traversel_regexp_exclude + ")|(" + _exclude_traversel_regexp_exclude_and_remove + ")";
+    _exclude_traversel_regexp_exclude = "^(" + _exclude_traversel_regexp_exclude + ")$|^(" + _exclude_traversel_regexp_exclude_and_remove + ")$";
     qDebug() << _exclude_traversel_regexp_exclude;
     ctx->parsed_traversal_excludes.regexp_exclude.setPattern(_exclude_traversel_regexp_exclude);
     ctx->parsed_traversal_excludes.regexp_exclude_and_remove.setPattern(_exclude_traversel_regexp_exclude_and_remove);
