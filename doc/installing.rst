@@ -51,7 +51,7 @@ See the following table for a list of available features:
 
 +--------------------+--------------------+----------------------------------+---------------------------+
 | Feature            | Enabled by default | Description                      |Property to disable        |
-+====================+====================+==================================+---------------------------+
++====================+====================+==================================+===========================+
 | Client             | Yes, required      | The actual client                |                           |
 +--------------------+--------------------+----------------------------------+---------------------------+
 | DesktopShortcut    | Yes                | Adds a shortcut to the desktop   |`NO_DESKTOP_SHORTCUT`      |
@@ -61,7 +61,7 @@ See the following table for a list of available features:
 | ShellExtensions    | Yes                | Adds Explorer integration        |`NO_SHELL_EXTENSIONS`      |
 +--------------------+--------------------+----------------------------------+---------------------------+
 
-*** Installation ***
+**Installation**
 
 You can also choose to only install the client itself by using the following command::
 
@@ -75,19 +75,21 @@ If you for instance want to install everything but the `DesktopShortcut` and the
 2. You pass the `NO_DESKTOP_SHORTCUT` and `NO_SHELL_EXTENSIONS` properties::
   msiexec /passive /i ownCloud-x.y.z.msi NO_DESKTOP_SHORTCUT="1" NO_SHELL_EXTENSIONS="1"
 
+
 *NOTE*: THe ownCloud MSI remembers these properties, so you don't need to specify them on upgrades.
+
 *NOTE*: You cannot use these to change the installed features, if you want to do that, see the next section.
 
-*** Changing installed features ***
+**Changing installed features**
 
 You can change the installed features later by using `REMOVE` and `ADDDEFAULT` properties.
-If you want to add the the desktop shortcut later::
-  msiexec /passive /i ownCloud-x.y.z.msi ADDDEFAULT="DesktopShortcut"
 
-If you want to remove it, simply do::
+1. If you want to add the the desktop shortcut later::
+  msiexec /passive /i ownCloud-x.y.z.msi ADDDEFAULT="DesktopShortcut"
+2. If you want to remove it, simply do::
   msiexec /passive /i ownCloud-x.y.z.msi REMOVE="DesktopShortcut"
 
-*NOTE*: Windows keeps track of the installed features and using `REMOVE` or `ADDDEFAULT` will only affect the mentioned features.
+Windows keeps track of the installed features and using `REMOVE` or `ADDDEFAULT` will only affect the mentioned features.
 
 Compare `REMOVE <https://msdn.microsoft.com/en-us/library/windows/desktop/aa371194(v=vs.85).aspx>`_
 and `ADDDEFAULT <https://msdn.microsoft.com/en-us/library/windows/desktop/aa367518(v=vs.85).aspx>`_
