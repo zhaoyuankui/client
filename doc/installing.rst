@@ -80,8 +80,14 @@ If you for instance want to install everything but the `DesktopShortcut` and the
 
 *** Changing installed features ***
 
-Windows keeps track of the installed features and e.g. `REMOVE=DesktopShortcut` will take
-care of removing the `DesktopShortcut` feature.
+You can change the installed features later by using `REMOVE` and `ADDDEFAULT` properties.
+If you want to add the the desktop shortcut later::
+  msiexec /passive /i ownCloud-x.y.z.msi ADDDEFAULT="DesktopShortcut"
+
+If you want to remove it, simply do::
+  msiexec /passive /i ownCloud-x.y.z.msi REMOVE="DesktopShortcut"
+
+*NOTE*: Windows keeps track of the installed features and using `REMOVE` or `ADDDEFAULT` will only affect the mentioned features.
 
 Compare `REMOVE <https://msdn.microsoft.com/en-us/library/windows/desktop/aa371194(v=vs.85).aspx>`_
 and `ADDDEFAULT <https://msdn.microsoft.com/en-us/library/windows/desktop/aa367518(v=vs.85).aspx>`_
