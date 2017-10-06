@@ -130,6 +130,18 @@ for non passive/quiet mode.
 
 `ǸOTE:` This option does not have any effect without GUI.
 
+
+No reboot after installation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The ownCloud Client schedules a reboot after installation to make sure the Explorer extension is correctly (un)loaded.
+If you're taking care of the reboot yourself, you can set the `REBOOT` property::
+  msiexec /i ownCloud-x.y.z.msi REBOOT=ReallySuppress
+
+This will make `msiexec` exit with error `ERROR_SUCCESS_REBOOT_REQUIRED` (3010).
+If your deployment tooling interprets this as an actual error and you want to avoid that, you may want to set the `DO_NOT_SCHEDULE_REBOOT` instead::
+  msiexec /i ownCloud-x.y.z.msi DO_NOT_SCHEDULE_REBOOT="1"
+
 Installation Wizard
 -------------------
 
