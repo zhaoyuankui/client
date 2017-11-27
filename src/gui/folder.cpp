@@ -38,6 +38,7 @@
 #include <QtWebSockets/QWebSocket>
 
 #include "creds/abstractcredentials.h"
+#include "creds/httpcredentials.h"
 
 #include <QDebug>
 #include <QTimer>
@@ -137,7 +138,16 @@ Folder::Folder(const FolderDefinition& definition,
     QByteArray wsUrl = qgetenv("OWNCLOUD_WEBSOCKET_URL");
     if (wsUrl.length() > 0) {
         qDebug() << "Connecting to websocket " << wsUrl;
-        _webSocket->open(QUrl::fromEncoded(wsUrl));
+        QNetworkRequest req(QUrl::fromEncoded(wsUrl));
+        OCC::HttpCredentials* httpCrets = qobject_cast<HttpCredentials*>(_accountState->account()->credentials());
+        if (httpCrets) {
+            // HTTP Basic authentication header value: base64(username:password)
+            QString concatenated = httpCrets->user() + ":" + httpCrets->password();
+            QByteArray data = concatenated.toLocal8Bit().toBase64();
+            QByteArray headerData = QString("Basic ").toLocal8Bit().append(data);
+            req.setRawHeader("Authorization", headerData);
+        }
+        _webSocket->open(req);
     }
 }
 
