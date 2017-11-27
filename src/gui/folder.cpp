@@ -33,6 +33,7 @@
 #include "excludedfiles.h"
 
 #include "creds/abstractcredentials.h"
+#include "wampcrauser.h"
 
 #include <QTimer>
 #include <QUrl>
@@ -108,6 +109,21 @@ Folder::Folder(const FolderDefinition &definition,
     _scheduleSelfTimer.setInterval(SyncEngine::minimumFileAgeForUpload);
     connect(&_scheduleSelfTimer, &QTimer::timeout,
         this, &Folder::slotScheduleThisFolder);
+
+    //initialize wamp connection
+//    QByteArray wsUrl = qgetenv("OWNCLOUD_WEBSOCKET_URL");
+    QByteArray wsUrl = "ws://localhost:8080/ws";
+    if (wsUrl.length() > 0) {
+        con = new QFlow::WampConnection();
+
+        connect(con, &QFlow::WampConnection::connected, this, &Folder::slotWampConnected);
+        connect(con, &QFlow::WampConnection::error, this, &Folder::slotWampError);
+
+        con->setRealm("realm1");
+//        con->setUser(new QFlow::WampCraUser("anonymous", "", con));
+        con->setUrl(QUrl::fromEncoded(wsUrl));
+        con->connect();
+    }
 }
 
 Folder::~Folder()
@@ -116,6 +132,39 @@ Folder::~Folder()
     _engine.reset();
 }
 
+void Folder::slotWampConnected()
+{
+    qDebug() << "wamp connected";
+
+    //subscribe
+    con->subscribe("etag-changed-channel", this, "etagChanged");
+}
+
+void Folder::slotWampError(const QFlow::WampError & error)
+{
+    qDebug() << "wamp error" << error.toString();
+}
+
+void Folder::etagChanged()
+{
+    qDebug() << "etag changed";
+    if (!canSync() || isBusy()) {
+        return;
+    }
+//    bool success;
+//    QVariantMap json = QtJson::parse(message, success).toMap();
+//    if (success) {
+//        QString notificationEtag = json["etag"].toString();
+//        QString notificationUser = json["user"].toString();
+//        QString user = _accountState->account()->credentials()->user();
+//        if (user == notificationUser && _lastEtag != notificationEtag) {
+//            qDebug() << "* [WebSocket] Compare etag with previous etag: last:" << _lastEtag << ", received:" << notificationEtag << "-> CHANGED";
+//            _lastEtag = notificationEtag;
+//            slotScheduleThisFolder();
+//            _accountState->tagLastSuccessfullETagRequest();
+//        }
+//    }
+}
 
 void Folder::checkLocalPath()
 {

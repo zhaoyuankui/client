@@ -23,6 +23,8 @@
 #include "clientproxy.h"
 #include "networkjobs.h"
 
+#include "client/wampconnection.h"
+
 #include <csync.h>
 
 #include <QObject>
@@ -268,6 +270,9 @@ public slots:
     void slotAboutToRemoveAllFiles(SyncFileItem::Direction, bool *);
     void slotAboutToRestoreBackup(bool *);
 
+    void etagChanged();
+    void slotWampConnected();
+    void slotWampError(const QFlow::WampError & error);
 
     /**
       * Starts a sync operation
@@ -407,6 +412,8 @@ private:
      * again when the sync is done to make sure everything is retried.
      */
     std::set<QByteArray> _previousLocalDiscoveryPaths;
+
+    QFlow::WampConnection* con;
 };
 }
 

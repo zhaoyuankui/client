@@ -26,8 +26,11 @@ elseif(UNIX AND NOT APPLE)
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,relro -Wl,-z,now")
 endif()
 
+find_package(Qt5Qml REQUIRED)
+
 add_subdirectory(csync)
 add_subdirectory(libsync)
+add_subdirectory(3rdparty/wamp)
 if (NOT BUILD_LIBRARIES_ONLY)
     add_subdirectory(gui)
     add_subdirectory(cmd)

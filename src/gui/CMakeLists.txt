@@ -178,6 +178,11 @@ set(3rdparty_INC
     ${CMAKE_SOURCE_DIR}/src/3rdparty/qtlockedfile
     ${CMAKE_SOURCE_DIR}/src/3rdparty/qtmacgoodies/src
     ${CMAKE_SOURCE_DIR}/src/3rdparty/qtsingleapplication
+    ${CMAKE_SOURCE_DIR}/src/3rdparty/wamp/src
+    ${CMAKE_SOURCE_DIR}/src/3rdparty/wamp/src/client
+    ${CMAKE_SOURCE_DIR}/src/3rdparty/wamp/src/router
+    ${CMAKE_SOURCE_DIR}/src/3rdparty/wamp/core/src
+    ${CMAKE_SOURCE_DIR}/src/3rdparty/wamp/websocket/src
     )
 
 include_directories(${3rdparty_INC})
@@ -292,7 +297,7 @@ endif()
 
 add_library(updater STATIC ${updater_SRCS} ${updaterMoc})
 target_link_libraries(updater ${synclib_NAME})
-qt5_use_modules(updater Widgets Network Xml)
+qt5_use_modules(updater Widgets Network Xml Qml)
 
 set_target_properties( ${APPLICATION_EXECUTABLE} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY  ${BIN_OUTPUT_DIRECTORY}
@@ -305,6 +310,7 @@ target_link_libraries( ${APPLICATION_EXECUTABLE} ${QT_LIBRARIES} )
 target_link_libraries( ${APPLICATION_EXECUTABLE} ${synclib_NAME} )
 target_link_libraries( ${APPLICATION_EXECUTABLE} updater )
 target_link_libraries( ${APPLICATION_EXECUTABLE} ${OS_SPECIFIC_LINK_LIBRARIES} )
+target_link_libraries( ${APPLICATION_EXECUTABLE} ${CMAKE_BINARY_DIR}/src/3rdparty/wamp/src/libwamp.so )
 
 if(WITH_CRASHREPORTER)
     target_link_libraries( ${APPLICATION_EXECUTABLE} crashreporter-handler)
