@@ -76,7 +76,7 @@ If you for instance want to install everything but the `DesktopShortcut` and the
   msiexec /passive /i ownCloud-x.y.z.msi NO_DESKTOP_SHORTCUT="1" NO_SHELL_EXTENSIONS="1"
 
 
-*NOTE*: THe ownCloud MSI remembers these properties, so you don't need to specify them on upgrades.
+*NOTE*: The ownCloud MSI remembers these properties, so you don't need to specify them on upgrades.
 
 *NOTE*: You cannot use these to change the installed features, if you want to do that, see the next section.
 
@@ -131,7 +131,7 @@ for non passive/quiet mode.
 `ǸOTE:` This option does not have any effect without GUI.
 
 
-No reboot after installation
+No reboot after (un)installation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ownCloud Client schedules a reboot after installation to make sure the Explorer extension is correctly (un)loaded.
@@ -141,6 +141,8 @@ If you're taking care of the reboot yourself, you can set the `REBOOT` property:
 This will make `msiexec` exit with error `ERROR_SUCCESS_REBOOT_REQUIRED` (3010).
 If your deployment tooling interprets this as an actual error and you want to avoid that, you may want to set the `DO_NOT_SCHEDULE_REBOOT` instead::
   msiexec /i ownCloud-x.y.z.msi DO_NOT_SCHEDULE_REBOOT="1"
+  
+  `ǸOTE:` If you need to set this for installation you most probably want to set it for upgrades and uninstallations too.
 
 Installation Wizard
 -------------------
