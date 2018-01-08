@@ -73,7 +73,7 @@ If you for instance want to install everything but the `DesktopShortcut` and the
   msiexec /passive /i ownCloud-x.y.z.msi ADDDEFAULT=StartMenuShortcuts
 
 2. You pass the `NO_DESKTOP_SHORTCUT` and `NO_SHELL_EXTENSIONS` properties::
-  msiexec /passive /i ownCloud-x.y.z.msi NO_DESKTOP_SHORTCUT="1" NO_SHELL_EXTENSIONS="1"
+  msiexec /passive /i ownCloud-x.y.z.msi NO_DESKTOP_SHORTCUT=1 NO_SHELL_EXTENSIONS=1
 
 
 *NOTE*: The ownCloud MSI remembers these properties, so you don't need to specify them on upgrades.
@@ -115,7 +115,7 @@ Disabling automatic updates
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 To disable automatic updates, you can pass the `SKIPAUTOUPDATE` property.::
 
-    msiexec /passive /i ownCloud-x.y.z.msi SKIPAUTOUPDATE="1"
+    msiexec /passive /i ownCloud-x.y.z.msi SKIPAUTOUPDATE=1
 
 
 Launch after installation
@@ -123,7 +123,7 @@ Launch after installation
 
 To launch the client automatically after installation, you can pass the `LAUNCH` property.::
 
-    msiexec /i ownCloud-x.y.z.msi LAUNCH="1"
+    msiexec /i ownCloud-x.y.z.msi LAUNCH=1
 
 This option also removes the checkbox to let users decide if they want to launch the client
 for non passive/quiet mode.
@@ -140,7 +140,7 @@ If you're taking care of the reboot yourself, you can set the `REBOOT` property:
 
 This will make `msiexec` exit with error `ERROR_SUCCESS_REBOOT_REQUIRED` (3010).
 If your deployment tooling interprets this as an actual error and you want to avoid that, you may want to set the `DO_NOT_SCHEDULE_REBOOT` instead::
-  msiexec /i ownCloud-x.y.z.msi DO_NOT_SCHEDULE_REBOOT="1"
+  msiexec /i ownCloud-x.y.z.msi DO_NOT_SCHEDULE_REBOOT=1
   
   `ǸOTE:` If you need to set this for installation you most probably want to set it for upgrades and uninstallations too.
 
