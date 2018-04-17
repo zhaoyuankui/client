@@ -93,11 +93,15 @@ SettingsDialogMac::SettingsDialogMac(ownCloudGui *gui, QWidget *parent)
 
     setWindowTitle(tr("%1").arg(Theme::instance()->appNameGUI()));
 
-    QIcon activityIcon(QLatin1String(":/client/resources/activity.png"));
+    //QIcon activityIcon(QLatin1String(":/client/resources/activity.png"));
     _activitySettings = new ActivitySettings;
-    addPreferencesPanel(activityIcon, tr("Activity"), _activitySettings);
+    addPreferencesPanel(Theme::instance()->applicationIcon(), tr("Activity"), _activitySettings);
     connect(_activitySettings, SIGNAL(guiLog(QString, QString)), _gui,
         SLOT(slotShowOptionalTrayMessage(QString, QString)));
+
+    addPreferencesPanel( Theme::instance()->syncStateIcon(SyncResult::Success), tr("Protocol"), _activitySettings);
+    addPreferencesPanel(Theme::instance()->syncStateIcon(SyncResult::Problem), tr("Not Synced"), _activitySettings);
+
 
     connect(AccountManager::instance(), &AccountManager::accountAdded,
         this, &SettingsDialogMac::accountAdded);
@@ -114,6 +118,9 @@ SettingsDialogMac::SettingsDialogMac(ownCloudGui *gui, QWidget *parent)
     QIcon networkIcon = MacStandardIcon::icon(MacStandardIcon::Network);
     NetworkSettings *networkSettings = new NetworkSettings;
     addPreferencesPanel(networkIcon, tr("Network"), networkSettings);
+
+    addPreferencesPanel(Theme::instance()->syncStateIcon(SyncResult::Undefined), tr("About"), _activitySettings);
+
 
     QAction *showLogWindow = new QAction(this);
     showLogWindow->setShortcut(QKeySequence("F12"));
