@@ -40,7 +40,6 @@ static void partialUpload(FakeFolder &fakeFolder, const QString &name, int size)
                                             [](int s, const FileInfo &i) { return s + i.size; }));
 }
 
-
 class TestChunkingNG : public QObject
 {
     Q_OBJECT

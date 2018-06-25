@@ -152,8 +152,8 @@ signals:
 /**
  * @brief This job implements the asynchronous PUT
  *
- * If the server replies to a PUT with a OC-Finish-Poll url, we will query this url until the server
- * replies with an etag. https://github.com/owncloud/core/issues/12097
+ * If the server replies to a PUT with a OC-JobStatus-Location path, we will query this url until the server
+ * replies with an etag.
  * @ingroup libsync
  */
 class PollJob : public AbstractNetworkJob
@@ -285,7 +285,7 @@ protected:
      */
     static void adjustLastJobTimeout(AbstractNetworkJob *job, quint64 fileSize);
 
-    // Bases headers that need to be sent with every chunk
+    /** Bases headers that need to be sent on the PUT, or in the MOVE for chunking-ng */
     QMap<QByteArray, QByteArray> headers();
 };
 
