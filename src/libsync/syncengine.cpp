@@ -1245,6 +1245,11 @@ QString SyncEngine::adjustRenamedPath(const QString &original)
     while ((slashPos = original.lastIndexOf('/', slashPos - 1)) > 0) {
         QHash<QString, QString>::const_iterator it = _renamedFolders.constFind(original.left(slashPos));
         if (it != _renamedFolders.constEnd()) {
+            auto original_it = _renamedFolders.constFind(original);
+            if (original_it != _renamedFolders.constEnd() && it->startsWith(*original_it)) {
+                return original; // Issue #6694: "hirarchy inversion"
+            }
+
             return *it + original.mid(slashPos);
         }
     }
