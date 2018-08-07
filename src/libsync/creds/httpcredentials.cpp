@@ -379,7 +379,7 @@ bool HttpCredentials::refreshAccessToken()
         QJsonParseError jsonParseError;
         QJsonObject json = QJsonDocument::fromJson(jsonData, &jsonParseError).object();
         QString accessToken = json["access_token"].toString();
-        if (reply->error() != QNetworkReply::NoError || jsonParseError.error != QJsonParseError::NoError || json.isEmpty()) {
+        if (jsonParseError.error != QJsonParseError::NoError || json.isEmpty()) {
             // Network error maybe?
             qCWarning(lcHttpCredentials) << "Error while refreshing the token" << reply->errorString() << jsonData << jsonParseError.errorString();
         } else if (accessToken.isEmpty()) {
